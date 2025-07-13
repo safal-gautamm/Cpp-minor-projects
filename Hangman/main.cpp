@@ -1,16 +1,23 @@
 #include <iostream>
 using std::cin, std::cout, std::endl, std::string;
 
+const int max_misses = 6;
+string word;
+string incorrect;
+string entered_characters;
+string user_answer;
+int misses;
+
+
 class Message
 {
 public:
-    const int max_misses = 6;
 
     void greet()
     {
-        cout << "-----------------------------------------------" << endl;
+        cout << "+---------------------------------------------+" << endl;
         cout << "|               H A N G M A N                 |" << endl;
-        cout << "-----------------------------------------------" << endl;
+        cout << "+---------------------------------------------+" << endl;
         cout << "Guess the Word:" << endl;
     }
     void display_misses(int misses)
@@ -51,26 +58,41 @@ public:
     void final_result(string user_answer, string word)
     {
         cout << "Your Answer: ";
-        for (char c : user_answer)
+        for (char ch : user_answer)
         {
-            cout << c << " ";
+            cout << ch << " ";
         }
         cout << endl << endl;
 
         if (user_answer == word)
         {
-            cout << "-----------------------------------------------" << endl;
+            cout << "+---------------------------------------------+" << endl;
             cout << "|                Y O U W I N !                |" << endl;
-            cout << "-----------------------------------------------" << endl;
+            cout << "+---------------------------------------------+" << endl;
         }
 
         else
         {
             cout << "The correct answer is: " << word << endl
                  << endl;
-            cout << "-----------------------------------------------" << endl;
+            cout << "+---------------------------------------------+" << endl;
             cout << "|               Y O U L O S E !               |" << endl;
-            cout << "-----------------------------------------------" << endl;
+            cout << "+---------------------------------------------+" << endl;
+        }
+    }
+};
+
+class Game
+{
+    public:
+    Game(string choosen_word)
+    {
+        word = choosen_word;
+        incorrect = "";
+
+        for (int i = 0; i < word.length(); ++i) 
+        {
+        user_answer += "_";
         }
     }
 };
