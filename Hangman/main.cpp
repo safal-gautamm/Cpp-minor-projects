@@ -1,8 +1,11 @@
 #include <iostream>
-using std::cin, std::cout, std::endl, std::string;
+#include <ctime>
+
+using namespace std;
 
 const int max_misses = 6;
 
+// message class for displaying messages and design
 class Message {
 public:
 
@@ -14,10 +17,92 @@ public:
         cout << "Guess the Word" << endl << endl;
     }
 
-    // method to display the number of misses
+
     void display_misses(int misses) {
-        cout << "Remaining misses: "<< max_misses - misses << endl << endl;
+
+        // add the body parts of the Hangman
+        // according to the number of misses
+        switch (misses) {
+
+            // display an empty gallows when misses = 0
+            case 0:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+
+            // draw the Hangman's head
+            case 1:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "  O   | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+
+            // draw the Hangman's torso
+            case 2:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "  O   | " << endl;
+                cout << "  |   | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+
+            // draw the Hangman's right arm
+            case 3:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "  O   | " << endl;
+                cout << " /|   | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+
+            // draw the Hangman's left arm
+            case 4:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "  O   | " << endl;
+                cout << " /|\\  | " << endl;
+                cout << "      | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+
+            // draw the Hangman's left leg
+            case 5:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "  O   | " << endl;
+                cout << " /|\\  | " << endl;
+                cout << " /    | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+
+            // draw the Hangman's right leg
+            case 6:
+                cout << "  +---+ " << endl;
+                cout << "  |   | " << endl;
+                cout << "  O   | " << endl;
+                cout << " /|\\  | " << endl;
+                cout << " / \\  | " << endl;
+                cout << "      | " << endl;
+                cout << "=========" << endl;
+                break;
+        }
     }
+
 
     // method to display the incorrect guesses
     void display_incorrect_guesses(string incorrect) {
@@ -27,7 +112,6 @@ public:
     // method to display the user answer
     void display_user_answer(string user_answer) {
         cout << "Your Answer: ";
-
         for (char c: user_answer) {
             cout << c << " ";
         }
@@ -59,9 +143,7 @@ public:
 
     // print win or loss message
     void final_result(string user_answer, string word) {
-
         cout << "Your Answer: ";
-
         for (char c: user_answer) {
             cout << c << " ";
         }
@@ -84,6 +166,8 @@ public:
         }
     }
 };
+
+// Game class to code the game logic
 class Game {
 private:
 
@@ -162,51 +246,66 @@ public:
 
     // method to display the game status
     void display_game_status() {
+        message.display_misses(misses);
         message.display_incorrect_guesses(incorrect);
         message.display_user_answer(user_answer);
-        message.display_misses(misses);
     }
 
     // method to display the final result
     void display_final_result() {
+        message.display_misses(misses);
         message.final_result(user_answer, word);
     }
 };
 
 int main() {
 
-    // chose the mystery word
-    string chosen_word = "ALGORITHM";
+    string library[] = { 
+        "ALGORITHM", 
+        "AUTOPSY", 
+        "DATABASE", 
+        "UBIQUITOUS", 
+        "TANTALIZING", 
+        "REVELATION", 
+        "SPORADIC", 
+        "DISCRETE", 
+        "ANALYSIS", 
+        "CALCULUS" 
+    };
+
+    // generate random numbers between 0 and 9
+    srand(time(0));
+    int index = rand() % 10;
+
+    // choose the mystery word
+    // based on the random number
+    string chosen_word = library[index];
 
     // variable to take user input
     char letter;
-
-    // create message object
+    
     Message message;
-
-    // create Game object and
-    // pass chosen_word to its constructor
     Game game(chosen_word);
 
     // greet the player
     message.greet();
 
-    // play game till the game is over
+    // play game until victory or loss
     while (!game.is_game_over()) {
 
         // display the game status
         game.display_game_status();
-        
+
         cout << "\nPlease enter your guess: ";
 
-        // get user input
+        // get user input and convert it to uppercase
         cin >> letter;
-    
-        // convert letter to uppercase
         letter = toupper(letter);
 
-        // check if the input is valid or not
+        // check if input is an alphabet
         if (game.is_guess_valid(letter)) {
+
+            // if input is valid, check if guess is correct
             game.is_guess_correct(letter);
         }
     }
