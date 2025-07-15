@@ -173,8 +173,45 @@ public:
     }
 };
 
-int main()
-{
+int main() {
+
+    // chose the mystery word
+    string chosen_word = "ALGORITHM";
+
+    // variable to take user input
+    char letter;
+
+    // create message object
+    Message message;
+
+    // create Game object and
+    // pass chosen_word to its constructor
+    Game game(chosen_word);
+
+    // greet the player
+    message.greet();
+
+    // play game till the game is over
+    while (!game.is_game_over()) {
+
+        // display the game status
+        game.display_game_status();
+        
+        cout << "\nPlease enter your guess: ";
+
+        // get user input
+        cin >> letter;
+    
+        // convert letter to uppercase
+        letter = toupper(letter);
+
+        // check if the input is valid or not
+        if (game.is_guess_valid(letter)) {
+            game.is_guess_correct(letter);
+        }
+    }
+
+    game.display_final_result();
 
     return 0;
 }
