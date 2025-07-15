@@ -15,7 +15,7 @@ public:
     void greet() {
         clear();
         printw("------------------------------\n");
-        printw("\t\tH A N G M A N\n");
+        printw("          H A N G M A N\n");
         printw("------------------------------\n");
         printw("Guess the Word\n\n");
         refresh();
