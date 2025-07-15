@@ -1,5 +1,10 @@
 #include <iostream>
+#include <fstream>
+#include <vector>
 #include <ctime>
+#include <ncurses.h>
+#include <cctype>
+#include <string>
 
 using namespace std;
 
@@ -7,149 +12,81 @@ const int max_misses = 6;
 
 class Message {
 public:
-
     void greet() {
-        cout << "------------------------------" << endl;
-        cout << "\t\tH A N G M A N" << endl;
-        cout << "------------------------------" << endl;
-        cout << "Guess the Word" << endl << endl;
+        clear();
+        printw("------------------------------\n");
+        printw("\t\tH A N G M A N\n");
+        printw("------------------------------\n");
+        printw("Guess the Word\n\n");
+        refresh();
     }
-
 
     void display_misses(int misses) {
-
-        switch (misses) {
-
-            case 0:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-
-            case 1:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "  O   | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-
-            case 2:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "  O   | " << endl;
-                cout << "  |   | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-
-            case 3:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "  O   | " << endl;
-                cout << " /|   | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-
-            case 4:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "  O   | " << endl;
-                cout << " /|\\  | " << endl;
-                cout << "      | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-
-            case 5:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "  O   | " << endl;
-                cout << " /|\\  | " << endl;
-                cout << " /    | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-
-            case 6:
-                cout << "  +---+ " << endl;
-                cout << "  |   | " << endl;
-                cout << "  O   | " << endl;
-                cout << " /|\\  | " << endl;
-                cout << " / \\  | " << endl;
-                cout << "      | " << endl;
-                cout << "=========" << endl;
-                break;
-        }
+        const char* stages[] = {
+            "  +---+ \n  |   | \n      | \n      | \n      | \n      | \n=========\n",
+            "  +---+ \n  |   | \n  O   | \n      | \n      | \n      | \n=========\n",
+            "  +---+ \n  |   | \n  O   | \n  |   | \n      | \n      | \n=========\n",
+            "  +---+ \n  |   | \n  O   | \n /|   | \n      | \n      | \n=========\n",
+            "  +---+ \n  |   | \n  O   | \n /|\\  | \n      | \n      | \n=========\n",
+            "  +---+ \n  |   | \n  O   | \n /|\\  | \n /    | \n      | \n=========\n",
+            "  +---+ \n  |   | \n  O   | \n /|\\  | \n / \\  | \n      | \n=========\n"
+        };
+        mvprintw(1, 0, "%s", stages[misses]);
     }
-
 
     void display_incorrect_guesses(string incorrect) {
-        cout << "Incorrect Guesses: " << incorrect << endl;
+        mvprintw(9, 0, "Incorrect Guesses: %s", incorrect.c_str());
     }
-    
-    void display_user_answer(string user_answer) {
-        cout << "Your Answer: ";
-        for (char c: user_answer) {
-            cout << c << " ";
-        }
 
-        cout << endl;
+    void display_user_answer(string user_answer) {
+        mvprintw(11, 0, "Your Answer: ");
+        for (char c : user_answer) {
+            printw("%c ", c);
+        }
     }
 
     void invalid_character_message() {
-        cout << "\nInvalid character!" << endl;
-        cout << "Input must be an alphabet!" << endl;
+        mvprintw(13, 0, "Invalid character! Input must be an alphabet!");
     }
 
     void already_entered_message() {
-        cout << "\nYou have already entered this letter!" << endl;
-        cout << "Enter another letter!" << endl;
+        mvprintw(13, 0, "You have already entered this letter! Enter another letter!");
     }
 
     void correct_message() {
-        cout << "\nCorrect!" << endl;
+        mvprintw(13, 0, "Correct!                                    ");
     }
 
     void incorrect_message() {
-        cout << "\nIncorrect!" << endl;
+        mvprintw(13, 0, "Incorrect!                                  ");
     }
 
     void final_result(string user_answer, string word) {
-        cout << "Your Answer: ";
-        for (char c: user_answer) {
-            cout << c << " ";
+        clear();
+        display_misses((user_answer == word) ? 0 : max_misses);
+        mvprintw(8, 0, "Your Answer: ");
+        for (char c : user_answer) {
+            printw("%c ", c);
         }
-
-        cout << endl << endl;
+        printw("\n\n");
 
         if (user_answer == word) {
-            cout << "-----------------------------------------------" << endl;
-            cout << "\t\t\t\tY O U  W I N" << endl;
-            cout << "-----------------------------------------------" << endl;
+            printw("---------------------------------------------\n");
+            printw("                 Y O U  W I N !\n");
+            printw("---------------------------------------------\n");
         }
-
         else {
-            cout << "The correct answer is: " << word << endl << endl;
-            cout << "-----------------------------------------------" << endl;
-            cout << "\t\t\t\tY O U  L O S E" << endl;
-            cout << "-----------------------------------------------" << endl;
+            printw("The correct answer is: %s\n\n", word.c_str());
+            printw("---------------------------------------------\n");
+            printw("                 Y O U  L O S E !\n");
+            printw("---------------------------------------------\n");
         }
+        refresh();
     }
 };
 
 class Game {
 private:
-
     string word;
     string user_answer;
     string incorrect;
@@ -158,46 +95,38 @@ private:
     Message message;
 
 public:
-
     Game(string chosen_word) {
         word = chosen_word;
         incorrect = "";
         entered_characters = "";
         misses = 0;
-
-        for (int i = 0; i < word.length(); ++i) {
-            user_answer += "_";
-        }
+        user_answer = string(word.length(), '_');
     }
 
     bool is_guess_valid(char letter) {
-
         if (!isalpha(letter)) {
             message.invalid_character_message();
+            refresh();
             return false;
         }
-
-        for (int i = 0; i < entered_characters.length(); ++i) {            
-            if (letter == entered_characters[i]) {
+        for (char c : entered_characters) {
+            if (letter == c) {
                 message.already_entered_message();
+                refresh();
                 return false;
             }
         }
-
         return true;
     }
 
     void is_guess_correct(char letter) {
-
         bool guess = false;
-
-        for (int i = 0; i < word.length(); i++) {
+        for (size_t i = 0; i < word.length(); i++) {
             if (letter == word[i]) {
                 user_answer[i] = letter;
                 guess = true;
             }
         }
-
         if (guess) {
             message.correct_message();
         }
@@ -207,72 +136,79 @@ public:
             incorrect += ", ";
             ++misses;
         }
-
         entered_characters += letter;
+        refresh();
     }
 
     bool is_game_over() {
-        if (user_answer == word || misses >= max_misses) {
-            return true;
-        }
-        return false;
+        return (user_answer == word || misses >= max_misses);
     }
 
     void display_game_status() {
+        clear();
         message.display_misses(misses);
         message.display_incorrect_guesses(incorrect);
         message.display_user_answer(user_answer);
+        refresh();
     }
 
     void display_final_result() {
-        message.display_misses(misses);
         message.final_result(user_answer, word);
     }
 };
 
 int main() {
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+    curs_set(0);
 
-    string library[] = { 
-        "ALGORITHM", 
-        "AUTOPSY", 
-        "DATABASE", 
-        "UBIQUITOUS", 
-        "TANTALIZING", 
-        "REVELATION", 
-        "SPORADIC", 
-        "DISCRETE", 
-        "ANALYSIS", 
-        "CALCULUS" 
-    };
+    string content;
+    vector<string> library;
 
-    srand(time(0));
-    int index = rand() % 10;
+    ifstream file("vocab.txt");
+    while (getline(file, content)) {
+        if (!content.empty()) {
+            library.push_back(content);
+        }
+    }
+    file.close();
+
+    srand(static_cast<unsigned>(time(0)));
+    int index = rand() % library.size();
 
     string chosen_word = library[index];
+    for (auto& ch : chosen_word) {
+        ch = toupper(ch);
+    }
 
-    char letter;
-    
     Message message;
     Game game(chosen_word);
 
     message.greet();
 
+    int ch;
     while (!game.is_game_over()) {
-
         game.display_game_status();
 
-        cout << "\nPlease enter your guess: ";
+        mvprintw(13, 0, "Please enter your guess: ");
+        refresh();
 
-        cin >> letter;
-        letter = toupper(letter);
+        ch = getch();
+        ch = toupper(static_cast<unsigned char>(ch));
 
-        if (game.is_guess_valid(letter)) {
-
-            game.is_guess_correct(letter);
+        if (game.is_guess_valid(ch)) {
+            game.is_guess_correct(ch);
         }
     }
 
     game.display_final_result();
 
+    mvprintw(15, 0, "Press any key to exit...");
+    refresh();
+    getch();
+
+    endwin();
     return 0;
 }
